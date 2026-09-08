@@ -1,0 +1,27 @@
+<svg width="240" height="60" viewBox="0 0 280 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="brandex-purple-blue-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+  </defs>
+
+  <!-- BrandEX Mark -->
+  <g transform="translate(4, 2)">
+    <!-- First slant bar -->
+    <path d="M 4 52 L 24 8 L 35 8 L 15 52 Z" fill="#0F172A" />
+    
+    <!-- Second slant bar -->
+    <path d="M 20 52 L 40 8 L 51 8 L 31 52 Z" fill="#0F172A" />
+    
+    <!-- Outer B structure loop -->
+    <path d="M 37 52 L 56 8 C 66 8, 76 14, 76 24 C 76 32, 69 38, 60 40 C 70 42, 78 48, 77 56 C 76 56, 75 56, 75 56 L 37 56 Z M 48 44 L 62 44 C 67 44, 70 41, 70 37 C 70 33, 67 30, 62 30 L 54 30 Z M 52 22 L 58 22 C 63 22, 66 19, 66 16 C 66 13, 63 11, 58 11 L 55 11 Z" fill="#0F172A" fill-rule="evenodd" />
+
+    <!-- Inner purple gradient ribbon insert inside B lower junction -->
+    <path d="M 46 36 L 58 23 L 64 36 Z" fill="url(#brandex-purple-blue-grad)" />
+  </g>
+
+  <!-- BrandEX Text -->
+  <text x="96" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="38" fill="#0F172A" letter-spacing="-0.035em">Brandex</text>
+</svg>

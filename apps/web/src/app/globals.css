@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-brand-navy: #0f172a;
+    --color-brand-navy-light: #1e293b;
+    --color-brand-purple: #7c3aed;
+    --color-brand-blue: #3b82f6;
+    --color-brand-indigo: #6366f1;
+    --color-brand-indigo-hover: #4f46e5;
+    --color-brand-indigo-light: #eef2ff;
+    
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #ffffff;
+    --color-bg-surface: #f8fafc;
+    
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-brand-accent: #4f46e5;
+    
+    --color-border-primary: #e2e8f0;
+    --color-border-light: #f1f5f9;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light !important;
+  overflow-x: clip;
+  max-width: 100vw;
+}
+
+body {
+  background-color: #ffffff;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+/* Force light theme always */
+html[data-darkreader-mode="dynamic"],
+html.dark {
+  color-scheme: light !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Navbar Hover Line Animation (Left to Right) */
+.nav-anim-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  color: #475569;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-anim-link:hover {
+  color: #0f172a;
+}
+
+.nav-anim-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2.5px;
+  background: linear-gradient(90deg, #7c3aed 0%, #3b82f6 100%);
+  border-radius: 9999px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-anim-link:hover::after,
+.nav-anim-link.active::after {
+  width: 100%;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-33.333%); }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Smooth Card Hover & Interactions */
+.smooth-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.smooth-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.06), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
+}
+
+/* Button Pulse & Smooth States */
+.btn-primary {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 14px 0 rgba(15, 23, 42, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Custom scrollbar for clean light UI */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
