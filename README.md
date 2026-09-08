@@ -62,8 +62,8 @@ brandex-utilities/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/jefferyopenclaw-max/Brandex-Communtiy.git
-   cd Brandex-Communtiy
+   git clone https://github.com/jefferyopenclaw-max/brandex-utilities.git
+   cd brandex-utilities
    ```
 
 2. Install dependencies:
