@@ -69,7 +69,7 @@ export default function GuidelinesPage() {
               <h2>3. Exporting & Downloading Results</h2>
             </div>
             <p>
-              When an operation completes, click the <strong>Download Real Result File</strong> button to save generated Blobs directly to your computer's Downloads folder.
+              When an operation completes, click the <strong>Download Real Result File</strong> button to save generated Blobs directly to your computer&apos;s Downloads folder.
             </p>
           </div>
 

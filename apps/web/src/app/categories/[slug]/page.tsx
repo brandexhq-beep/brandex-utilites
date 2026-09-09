@@ -88,6 +88,15 @@ export default function CategoryDetailPage() {
   const [regexPattern, setRegexPattern] = useState('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}');
   const [hmacSecret, setHmacSecret] = useState('brandex_secret_key');
   const [uuidCount, setUuidCount] = useState(5);
+  const [rotationDegrees, setRotationDegrees] = useState(90);
+  const [marginPt, setMarginPt] = useState(20);
+  const [hashAlgorithm, setHashAlgorithm] = useState<'SHA-256' | 'SHA-512' | 'SHA-1'>('SHA-256');
+  const [passwordLength, setPasswordLength] = useState(16);
+  const [codeIndentSpaces, setCodeIndentSpaces] = useState(2);
+  const [indentToTabs, setIndentToTabs] = useState(false);
+  const [lineEndingFormat, setLineEndingFormat] = useState<'LF' | 'CRLF'>('LF');
+  const [csvHeaderStyle, setCsvHeaderStyle] = useState<'snake' | 'camel' | 'lower'>('snake');
+  const [jsonSearchKey, setJsonSearchKey] = useState('id');
 
   // Real processing state
   const [isProcessing, setIsProcessing] = useState(false);
@@ -145,11 +154,19 @@ export default function CategoryDetailPage() {
         quality: quality / 100,
         maxWidth: resizeWidth,
         maxHeight: resizeHeight,
-        indent: jsonIndent,
+        indent: jsonIndent || codeIndentSpaces,
         mode: convertMode,
         pattern: regexPattern,
         secret: hmacSecret,
-        count: uuidCount
+        count: uuidCount,
+        degrees: rotationDegrees,
+        margin: marginPt,
+        algorithm: hashAlgorithm,
+        style: csvHeaderStyle,
+        searchKey: jsonSearchKey,
+        lineEnding: lineEndingFormat,
+        length: passwordLength,
+        toTabs: indentToTabs
       }
     });
 
@@ -561,6 +578,143 @@ export default function CategoryDetailPage() {
                         </button>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* PDF ROTATION: ANGLE SELECTOR */}
+                {activeTool.id === 'pdf-rotation-batch' && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-extrabold text-slate-800 block">Rotation Angle:</label>
+                    <div className="flex space-x-2">
+                      {[90, 180, 270].map(deg => (
+                        <button
+                          key={deg}
+                          type="button"
+                          onClick={() => setRotationDegrees(deg)}
+                          className={`px-4 py-1.5 rounded-xl text-xs font-extrabold border transition-all ${
+                            rotationDegrees === deg ? 'bg-[#4F46E5] text-white border-[#4F46E5] shadow-xs' : 'bg-white text-slate-800 border-slate-300 hover:border-[#4F46E5]'
+                          }`}
+                        >
+                          {deg}° Clockwise
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* PDF MARGINS: PADDING SELECTOR */}
+                {(activeTool.id.includes('margin') || activeTool.id.includes('bleed') || activeTool.id.includes('trim')) && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-extrabold text-slate-800 block">Margin Expansion (pt):</label>
+                    <div className="flex space-x-2">
+                      {[10, 20, 36, 50].map(pt => (
+                        <button
+                          key={pt}
+                          type="button"
+                          onClick={() => setMarginPt(pt)}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition-all ${
+                            marginPt === pt ? 'bg-[#4F46E5] text-white border-[#4F46E5] shadow-xs' : 'bg-white text-slate-800 border-slate-300 hover:border-[#4F46E5]'
+                          }`}
+                        >
+                          +{pt} pt
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* HASH ALGORITHM SELECTOR */}
+                {(activeTool.id.includes('hash') || activeTool.id === 'checksum-calc') && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-extrabold text-slate-800 block">Hash Algorithm:</label>
+                    <div className="flex space-x-2">
+                      {(['SHA-256', 'SHA-512', 'SHA-1'] as const).map(algo => (
+                        <button
+                          key={algo}
+                          type="button"
+                          onClick={() => setHashAlgorithm(algo)}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition-all ${
+                            hashAlgorithm === algo ? 'bg-[#4F46E5] text-white border-[#4F46E5] shadow-xs' : 'bg-white text-slate-800 border-slate-300 hover:border-[#4F46E5]'
+                          }`}
+                        >
+                          {algo}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* PASSWORD GENERATOR: LENGTH */}
+                {activeTool.id === 'password-gen' && (
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center text-xs font-extrabold text-slate-800">
+                      <span>Password Length:</span>
+                      <span className="font-mono text-[#4F46E5] text-sm">{passwordLength} chars</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="8"
+                      max="48"
+                      value={passwordLength}
+                      onChange={(e) => setPasswordLength(Number(e.target.value))}
+                      className="w-full accent-[#4F46E5] cursor-pointer"
+                    />
+                  </div>
+                )}
+
+                {/* BASE64 / URL: ENCODE VS DECODE */}
+                {(activeTool.id === 'base64' || activeTool.id === 'url-encoder') && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-extrabold text-slate-800 block">Operation Mode:</label>
+                    <div className="flex space-x-2">
+                      {(['encode', 'decode'] as const).map(m => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setConvertMode(m)}
+                          className={`px-4 py-1.5 rounded-xl text-xs font-extrabold border uppercase transition-all ${
+                            convertMode === m ? 'bg-[#4F46E5] text-white border-[#4F46E5] shadow-xs' : 'bg-white text-slate-800 border-slate-300 hover:border-[#4F46E5]'
+                          }`}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* CSV HEADER NORMALIZER */}
+                {activeTool.id === 'csv-header-normalizer' && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-extrabold text-slate-800 block">Header Style:</label>
+                    <div className="flex space-x-2">
+                      {(['snake', 'camel', 'lower'] as const).map(st => (
+                        <button
+                          key={st}
+                          type="button"
+                          onClick={() => setCsvHeaderStyle(st)}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition-all ${
+                            csvHeaderStyle === st ? 'bg-[#4F46E5] text-white border-[#4F46E5] shadow-xs' : 'bg-white text-slate-800 border-slate-300 hover:border-[#4F46E5]'
+                          }`}
+                        >
+                          {st === 'snake' ? 'snake_case' : st === 'camel' ? 'camelCase' : 'lowercase'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* JSON KEY SEARCH */}
+                {activeTool.id === 'json-key-finder' && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-extrabold text-slate-800 block">Target Key Name:</label>
+                    <input
+                      type="text"
+                      value={jsonSearchKey}
+                      onChange={(e) => setJsonSearchKey(e.target.value)}
+                      placeholder="e.g. email, id, token..."
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-mono text-slate-900 focus:outline-none focus:border-[#4F46E5]"
+                    />
                   </div>
                 )}
               </div>

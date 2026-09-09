@@ -43,8 +43,10 @@ export default function TypewriterText({
           setCurrentText(fullText.slice(0, currentText.length - 1));
         }, deletingSpeed);
       } else {
-        setIsDeleting(false);
-        setPhraseIndex((prev) => (prev + 1) % phrases.length);
+        timer = setTimeout(() => {
+          setIsDeleting(false);
+          setPhraseIndex((prev) => (prev + 1) % phrases.length);
+        }, 200);
       }
     }
 

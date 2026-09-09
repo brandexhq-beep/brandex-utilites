@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ArrowRight, ChevronDown } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import BrandexLogo from './BrandexLogo';
-import { CATEGORIES } from '@/lib/categories';
 
 interface NavbarProps {
   onOpenSearch?: () => void;
@@ -13,7 +12,6 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenSearch }: NavbarProps) {
   const pathname = usePathname();
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
 
   const navLinks = [
     { label: 'Home', href: '/' },

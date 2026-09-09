@@ -11,10 +11,7 @@ import {
   Globe, 
   Wand2, 
   ShieldCheck, 
-  Zap, 
-  CheckCircle2, 
-  Cpu, 
-  FileCheck 
+  Zap
 } from 'lucide-react';
 
 const MARQUEE_ITEMS = [

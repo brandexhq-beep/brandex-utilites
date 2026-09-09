@@ -93,7 +93,7 @@ export default function UniversalSearchModal({ isOpen, onClose }: UniversalSearc
             ))
           ) : (
             <div className="p-8 text-center text-slate-500 text-xs">
-              No utilities found matching "{query}". Try searching for PDF, Image, JSON, or Hash.
+              No utilities found matching &quot;{query}&quot;. Try searching for PDF, Image, JSON, or Hash.
             </div>
           )}
         </div>

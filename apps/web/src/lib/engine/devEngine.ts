@@ -5,11 +5,11 @@ import { ProcessingResult } from './imageEngine';
  */
 export function formatJSON(input: string, indent: number = 2): ProcessingResult {
   try {
-    if (!input || !input.trim()) throw new Error("JSON input cannot be empty.");
+    if (!input || !input.trim()) throw new Error('JSON input cannot be empty.');
     const parsed = JSON.parse(input);
     const formatted = JSON.stringify(parsed, null, indent);
     const blob = new Blob([formatted], { type: 'application/json' });
-    
+
     return {
       success: true,
       outputBlob: blob,
@@ -18,10 +18,11 @@ export function formatJSON(input: string, indent: number = 2): ProcessingResult 
       data: formatted,
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Invalid JSON format.';
     return {
       success: false,
-      error: `Invalid JSON: ${err.message}`
+      error: `Invalid JSON: ${errorMsg}`
     };
   }
 }
@@ -31,7 +32,7 @@ export function formatJSON(input: string, indent: number = 2): ProcessingResult 
  */
 export function processBase64(input: string, mode: 'encode' | 'decode'): ProcessingResult {
   try {
-    if (!input) throw new Error("Input string is empty.");
+    if (!input) throw new Error('Input string is empty.');
     let result = '';
     if (mode === 'encode') {
       result = btoa(encodeURIComponent(input).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode(parseInt(p1, 16))));
@@ -47,10 +48,11 @@ export function processBase64(input: string, mode: 'encode' | 'decode'): Process
       data: result,
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Processing error.';
     return {
       success: false,
-      error: `Base64 ${mode} error: ${err.message}`
+      error: `Base64 ${mode} error: ${errorMsg}`
     };
   }
 }
@@ -62,7 +64,7 @@ export function decodeJWT(jwtToken: string): ProcessingResult {
   try {
     const parts = jwtToken.trim().split('.');
     if (parts.length !== 3) {
-      throw new Error("Invalid JWT format. A valid token consists of 3 dot-separated parts.");
+      throw new Error('Invalid JWT format. A valid token consists of 3 dot-separated parts.');
     }
     const b64Decode = (str: string) => {
       const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -83,10 +85,11 @@ export function decodeJWT(jwtToken: string): ProcessingResult {
       data: decodedResult,
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Failed to decode JWT token.';
     return {
       success: false,
-      error: err.message || "Failed to decode JWT token."
+      error: errorMsg
     };
   }
 }
@@ -98,7 +101,7 @@ export function computeDiff(original: string, modified: string): ProcessingResul
   try {
     const origLines = (original || '').split('\n');
     const modLines = (modified || '').split('\n');
-    
+
     const diff: Array<{ type: 'add' | 'remove' | 'same'; text: string; lineNumber?: number }> = [];
     const maxLen = Math.max(origLines.length, modLines.length);
 
@@ -134,34 +137,48 @@ export function computeDiff(original: string, modified: string): ProcessingResul
       data: { additions, deletions, diff },
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Failed to compute diff.';
     return {
       success: false,
-      error: err.message || "Failed to compute diff."
+      error: errorMsg
     };
   }
 }
 
 /**
- * Real Local cURL to Code Converter
+ * Real Local cURL to Fetch / Code Converter
  */
 export function convertCurl(curlCommand: string): ProcessingResult {
   try {
-    if (!curlCommand || !curlCommand.trim()) throw new Error("cURL command cannot be empty.");
-    const urlMatch = curlCommand.match(/curl\s+['"]?([^'"]+)['"]?/i);
-    const url = urlMatch ? urlMatch[1] : 'https://api.example.com/v1/resource';
+    if (!curlCommand || !curlCommand.trim()) throw new Error('cURL command cannot be empty.');
 
-    const jsFetchCode = `// Generated JavaScript Fetch Code
+    const urlMatch = curlCommand.match(/curl\s+(?:-[A-Za-z]+\s+)*['"]?([^'"]+)['"]?/i);
+    const methodMatch = curlCommand.match(/-X\s+([A-Z]+)/i);
+    const method = methodMatch ? methodMatch[1].toUpperCase() : 'GET';
+    const url = urlMatch ? urlMatch[1] : 'https://api.brandex.co.in/v1/resource';
+
+    const headerMatches = [...curlCommand.matchAll(/-H\s+['"]([^'"]+)['"]/gi)];
+    const headers: Record<string, string> = {};
+    for (const m of headerMatches) {
+      const [k, ...v] = m[1].split(':');
+      if (k && v.length > 0) {
+        headers[k.trim()] = v.join(':').trim();
+      }
+    }
+
+    const dataMatch = curlCommand.match(/(?:-d|--data|--data-raw)\s+['"]([^'"]+)['"]/i);
+    const bodyData = dataMatch ? dataMatch[1] : null;
+
+    const jsFetchCode = `// Generated JavaScript Fetch Code by BrandEX
 fetch('${url}', {
-  method: 'GET',
-  headers: {
-    'Accept': 'application/json',
-    'User-Agent': 'Brandex-Utilities/1.0'
-  }
+  method: '${method}',
+  headers: ${JSON.stringify(headers, null, 4)},
+  ${bodyData ? `body: JSON.stringify(${bodyData})` : '// No request body'}
 })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));`;
+  .then(res => res.json())
+  .then(data => console.log('Response:', data))
+  .catch(err => console.error('Fetch error:', err));`;
 
     const blob = new Blob([jsFetchCode], { type: 'text/javascript' });
 
@@ -173,10 +190,11 @@ fetch('${url}', {
       data: jsFetchCode,
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'cURL conversion error.';
     return {
       success: false,
-      error: `cURL conversion error: ${err.message}`
+      error: `cURL conversion error: ${errorMsg}`
     };
   }
 }
@@ -186,7 +204,7 @@ fetch('${url}', {
  */
 export function evaluateRegex(pattern: string, text: string): ProcessingResult {
   try {
-    if (!pattern) throw new Error("RegEx pattern is required.");
+    if (!pattern) throw new Error('RegEx pattern is required.');
     const regex = new RegExp(pattern, 'g');
     const matches = [];
     let match;
@@ -209,10 +227,11 @@ export function evaluateRegex(pattern: string, text: string): ProcessingResult {
       data: { pattern, totalMatches: matches.length, matches },
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'RegEx evaluation error.';
     return {
       success: false,
-      error: `RegEx evaluation error: ${err.message}`
+      error: `RegEx evaluation error: ${errorMsg}`
     };
   }
 }
@@ -222,10 +241,10 @@ export function evaluateRegex(pattern: string, text: string): ProcessingResult {
  */
 export function formatXML(xmlInput: string): ProcessingResult {
   try {
-    if (!xmlInput) throw new Error("XML content cannot be empty.");
+    if (!xmlInput) throw new Error('XML content cannot be empty.');
     let formatted = '';
-    let reg = /(>)(<)(\/*)/g;
-    let xml = xmlInput.replace(reg, '$1\r\n$2$3');
+    const reg = /(>)(<)(\/*)/g;
+    const xml = xmlInput.replace(reg, '$1\r\n$2$3');
     let pad = 0;
 
     xml.split('\r\n').forEach(node => {
@@ -255,10 +274,11 @@ export function formatXML(xmlInput: string): ProcessingResult {
       data: formatted,
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'XML formatting error.';
     return {
       success: false,
-      error: `XML formatting error: ${err.message}`
+      error: `XML formatting error: ${errorMsg}`
     };
   }
 }
@@ -268,9 +288,9 @@ export function formatXML(xmlInput: string): ProcessingResult {
  */
 export function formatSQL(sqlInput: string): ProcessingResult {
   try {
-    if (!sqlInput) throw new Error("SQL query cannot be empty.");
+    if (!sqlInput) throw new Error('SQL query cannot be empty.');
     const keywords = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'ON', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE'];
-    
+
     let formatted = sqlInput;
     keywords.forEach(kw => {
       const regex = new RegExp(`\\b${kw}\\b`, 'gi');
@@ -288,10 +308,223 @@ export function formatSQL(sqlInput: string): ProcessingResult {
       data: formatted,
       outputSize: blob.size
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'SQL formatting error.';
     return {
       success: false,
-      error: `SQL formatting error: ${err.message}`
+      error: `SQL formatting error: ${errorMsg}`
     };
   }
+}
+
+/**
+ * Real Local Code Line Counter
+ */
+export function countCodeLines(code: string): ProcessingResult {
+  const lines = code.split('\n');
+  let blankLines = 0;
+  let commentLines = 0;
+  let codeLines = 0;
+  let inBlockComment = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      blankLines++;
+      continue;
+    }
+
+    if (inBlockComment) {
+      commentLines++;
+      if (trimmed.includes('*/')) inBlockComment = false;
+      continue;
+    }
+
+    if (trimmed.startsWith('/*')) {
+      commentLines++;
+      if (!trimmed.includes('*/')) inBlockComment = true;
+      continue;
+    }
+
+    if (trimmed.startsWith('//') || trimmed.startsWith('#') || trimmed.startsWith('--')) {
+      commentLines++;
+      continue;
+    }
+
+    codeLines++;
+  }
+
+  const report = `=== SOURCE CODE LINE COUNT METRICS ===
+Total Lines: ${lines.length}
+Code Lines (SLOC): ${codeLines}
+Comment Lines: ${commentLines}
+Blank / Empty Lines: ${blankLines}
+Characters: ${code.length.toLocaleString()}
+Non-Whitespace Characters: ${code.replace(/\s+/g, '').length.toLocaleString()}
+Average Line Length: ${(code.length / Math.max(1, lines.length)).toFixed(1)} chars`;
+
+  const blob = new Blob([report], { type: 'text/plain' });
+
+  return {
+    success: true,
+    outputBlob: blob,
+    outputUrl: URL.createObjectURL(blob),
+    outputFileName: 'line_count_metrics.txt',
+    data: report,
+    outputSize: blob.size
+  };
+}
+
+/**
+ * Real Local Code Comment Stripper
+ */
+export function stripCodeComments(code: string): ProcessingResult {
+  // Remove multi-line comments: /* ... */
+  let stripped = code.replace(/\/\*[\s\S]*?\*\//g, '');
+  // Remove single-line comments: // ..., # ..., -- ...
+  stripped = stripped.replace(/(^|\s)\/\/[^\n]*/g, '$1');
+  stripped = stripped.replace(/(^|\s)#[^\n]*/g, '$1');
+
+  const blob = new Blob([stripped], { type: 'text/plain' });
+
+  return {
+    success: true,
+    outputBlob: blob,
+    outputUrl: URL.createObjectURL(blob),
+    outputFileName: 'clean_code.txt',
+    data: stripped,
+    outputSize: blob.size
+  };
+}
+
+/**
+ * Real Local Trailing Whitespace Cleaner
+ */
+export function cleanTrailingWhitespace(code: string): ProcessingResult {
+  const cleaned = code
+    .split('\n')
+    .map(line => line.replace(/\s+$/, ''))
+    .join('\n');
+
+  const removedBytes = code.length - cleaned.length;
+  const blob = new Blob([cleaned], { type: 'text/plain' });
+
+  return {
+    success: true,
+    outputBlob: blob,
+    outputUrl: URL.createObjectURL(blob),
+    outputFileName: 'trimmed_code.txt',
+    data: cleaned,
+    outputSize: blob.size,
+    compressionRatio: `${removedBytes} bytes saved`
+  };
+}
+
+/**
+ * Real Local Indentation Converter (Spaces to Tabs or Spaces to Spaces)
+ */
+export function convertIndentation(code: string, targetSpaces: number = 2, toTabs: boolean = false): ProcessingResult {
+  const lines = code.split('\n');
+  const converted = lines.map(line => {
+    const match = line.match(/^([ \t]+)/);
+    if (!match) return line;
+
+    const leading = match[1];
+    // Estimate current indent level (assuming tab = 4 or counting leading spaces)
+    let spaceCount = 0;
+    for (const char of leading) {
+      if (char === '\t') spaceCount += 4;
+      else spaceCount += 1;
+    }
+
+    const level = Math.round(spaceCount / 2);
+    const newIndent = toTabs ? '\t'.repeat(level) : ' '.repeat(level * targetSpaces);
+    return newIndent + line.slice(leading.length);
+  }).join('\n');
+
+  const blob = new Blob([converted], { type: 'text/plain' });
+
+  return {
+    success: true,
+    outputBlob: blob,
+    outputUrl: URL.createObjectURL(blob),
+    outputFileName: 'reindented_code.txt',
+    data: converted,
+    outputSize: blob.size
+  };
+}
+
+/**
+ * Real Local Line Ending Converter (CRLF <-> LF)
+ */
+export function convertLineEndings(code: string, toFormat: 'LF' | 'CRLF' = 'LF'): ProcessingResult {
+  const normalized = code.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const result = toFormat === 'CRLF' ? normalized.replace(/\n/g, '\r\n') : normalized;
+  const blob = new Blob([result], { type: 'text/plain' });
+
+  return {
+    success: true,
+    outputBlob: blob,
+    outputUrl: URL.createObjectURL(blob),
+    outputFileName: `line_endings_${toFormat.toLowerCase()}.txt`,
+    data: `Converted document to ${toFormat} line endings (${toFormat === 'CRLF' ? '\\r\\n' : '\\n'}).`,
+    outputSize: blob.size
+  };
+}
+
+/**
+ * Real Local BOM Detector & Cleaner
+ */
+export function detectAndStripBOM(content: string): ProcessingResult {
+  const hasBOM = content.charCodeAt(0) === 0xFEFF;
+  const cleaned = hasBOM ? content.slice(1) : content;
+
+  const summary = `=== BYTE ORDER MARK (BOM) REPORT ===
+BOM Detected: ${hasBOM ? 'YES (UTF-8 / UTF-16 BOM: \\uFEFF)' : 'NO (Clean UTF-8 Stream)'}
+Cleaned Status: ${hasBOM ? 'BOM signature stripped successfully.' : 'No modifications required.'}`;
+
+  const blob = new Blob([cleaned], { type: 'text/plain' });
+
+  return {
+    success: true,
+    outputBlob: blob,
+    outputUrl: URL.createObjectURL(blob),
+    outputFileName: 'clean_bom.txt',
+    data: summary + '\n\n' + cleaned,
+    outputSize: blob.size
+  };
+}
+
+/**
+ * Real Local Source Code Statistics & Complexity Estimator
+ */
+export function computeSourceCodeStats(code: string): ProcessingResult {
+  const lines = code.split('\n');
+  const lineCount = lines.length;
+  const words = code.trim().split(/\s+/).filter(Boolean).length;
+  const chars = code.length;
+
+  // Rough cyclomatic complexity heuristic based on decision keywords
+  const branches = (code.match(/\b(if|else if|for|while|case|catch|\?|&&|\|\|)\b/g) || []).length;
+  const complexity = branches + 1;
+
+  const report = `=== SOURCE CODE COMPLEXITY & STATISTICAL PROFILE ===
+Total Lines: ${lineCount}
+Total Words: ${words}
+Characters: ${chars}
+Estimated Decision Branches: ${branches}
+Cyclomatic Complexity Index: ${complexity} (${complexity < 10 ? 'Low / Maintainable' : complexity < 25 ? 'Moderate' : 'High / Refactor Recommended'})
+Max Line Length: ${Math.max(...lines.map(l => l.length), 0)} characters
+Estimated Token Count: ~${Math.round(chars / 4)}`;
+
+  const blob = new Blob([report], { type: 'text/plain' });
+
+  return {
+    success: true,
+    outputBlob: blob,
+    outputUrl: URL.createObjectURL(blob),
+    outputFileName: 'code_statistics.txt',
+    data: report,
+    outputSize: blob.size
+  };
 }

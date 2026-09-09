@@ -1,24 +1,3 @@
-import { 
-  FileText, 
-  Image, 
-  Code, 
-  Database, 
-  Lock, 
-  Archive, 
-  Globe, 
-  Wand2,
-  QrCode,
-  Mail,
-  Sliders,
-  Calendar,
-  Calculator,
-  Type,
-  FolderSearch,
-  Eye,
-  Printer,
-  CheckSquare
-} from 'lucide-react';
-
 export interface UtilityItem {
   id: string;
   name: string;

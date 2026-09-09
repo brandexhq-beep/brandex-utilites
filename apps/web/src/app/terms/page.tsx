@@ -60,7 +60,7 @@ export default function TermsPage() {
           <section className="bg-slate-50 border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-3">
             <h2 className="text-slate-900 font-extrabold text-lg mb-2">3. Disclaimer of Warranty</h2>
             <p>
-              BrandEX Utilities is provided "as is" without warranty of any kind. While all tools undergo rigorous deterministic testing, users are encouraged to maintain backup copies of critical files before running destructive operations like page splitting or formatting.
+              BrandEX Utilities is provided &quot;as is&quot; without warranty of any kind. While all tools undergo rigorous deterministic testing, users are encouraged to maintain backup copies of critical files before running destructive operations like page splitting or formatting.
             </p>
           </section>
 
