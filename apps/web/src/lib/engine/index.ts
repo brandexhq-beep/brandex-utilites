@@ -98,7 +98,8 @@ export async function executeLocalUtility(payload: ToolExecutionPayload): Promis
     return fallback;
   };
 
-  switch (toolId) {
+  const execute = async (): Promise<ProcessingResult> => {
+    switch (toolId) {
     // 1. PDF & DOCUMENTS UTILITIES
     case 'pdf-compress':
       if (!mainFile) return { success: false, error: 'Please select a PDF file to compress.' };
@@ -603,5 +604,28 @@ ${issues.length > 0 ? issues.map(i => `⚠️ ${i}`).join('\n') : '✅ All check
         data: `=== BRANDEX UTILITY EXECUTOR (${toolId.toUpperCase()}) ===\nProcessing Engine: Universal Local Engine\nInput: ${mainFile?.name || textInput || 'Input Data Payload'}\nStatus: Execution Completed Successfully`,
         outputFileName: `${toolId}_result.txt`
       };
+    }
+  };
+
+  const rawInputText = await resolveText('');
+  const result = await execute();
+
+  if (result && result.success) {
+    if (!result.originalInput && rawInputText) {
+      result.originalInput = rawInputText;
+    }
+    if (!result.originalSize) {
+      if (mainFile) result.originalSize = mainFile.size;
+      else if (rawInputText) result.originalSize = new TextEncoder().encode(rawInputText).length;
+    }
+    if (mainFile && !result.originalUrl && (mainFile.type.startsWith('image/') || mainFile.name.match(/\.(png|jpe?g|webp|gif|svg)$/i))) {
+      try {
+        result.originalUrl = URL.createObjectURL(mainFile);
+      } catch {
+        // Continue if ObjectURL fails
+      }
+    }
   }
+
+  return result;
 }
