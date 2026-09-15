@@ -40,8 +40,14 @@ import {
   Split,
   Layers,
   Sparkles,
-  Check
+  Check,
+  Share2,
+  Clipboard,
+  Trash2,
+  FileUp,
+  ExternalLink
 } from 'lucide-react';
+import { getSampleDataForTool } from '@/lib/sampleData';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   FileText: <FileText className="w-8 h-8 text-[#4F46E5]" />,
@@ -153,9 +159,74 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
     }
   };
 
+  const [modalDragActive, setModalDragActive] = useState(false);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFiles(Array.from(e.target.files));
+    }
+  };
+
+  const handleModalDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setModalDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setSelectedFiles(prev => [...prev, ...Array.from(e.dataTransfer.files)]);
+    }
+  };
+
+  const handleModalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFiles(prev => [...prev, ...Array.from(e.target.files)]);
+    }
+  };
+
+  const removeFileAtIndex = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const clearFiles = () => {
+    setSelectedFiles([]);
+  };
+
+  const shareToolLink = () => {
+    if (typeof window !== 'undefined' && activeTool) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tool', activeTool.id);
+      navigator.clipboard.writeText(url.toString());
+      setToastMessage(`Direct link to "${activeTool.name}" copied to clipboard!`);
+      setShowToast(true);
+    }
+  };
+
+  const loadSampleData = () => {
+    if (!activeTool) return;
+    const sample = getSampleDataForTool(activeTool.id);
+    if (sample) {
+      if (sample.text) {
+        setTextInput(sample.text);
+      }
+      if (sample.options) {
+        if (sample.options.pattern) setRegexPattern(sample.options.pattern);
+        if (sample.options.count) setUuidCount(sample.options.count);
+        if (sample.options.length) setPasswordLength(sample.options.length);
+      }
+      setToastMessage(`Sample dataset loaded for "${activeTool.name}"!`);
+      setShowToast(true);
+    }
+  };
+
+  const pasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        setTextInput(text);
+        setToastMessage('Pasted content from clipboard!');
+        setShowToast(true);
+      }
+    } catch {
+      setToastMessage('Clipboard read blocked. Please paste using Ctrl+V / ⌘V.');
+      setShowToast(true);
     }
   };
 
@@ -473,12 +544,23 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
                 <span className="text-[10px] font-extrabold text-[#4F46E5] uppercase tracking-wider">{category.name}</span>
                 <h3 className="text-xl font-extrabold text-slate-900">{activeTool.name}</h3>
               </div>
-              <button 
-                onClick={closeToolModal} 
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={shareToolLink}
+                  className="px-3 py-1.5 rounded-xl text-slate-600 hover:text-[#4F46E5] hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 transition-all text-xs font-bold flex items-center space-x-1.5 shadow-2xs"
+                  title="Copy direct share link to this utility"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[#4F46E5]" />
+                  <span className="hidden sm:inline">Share Tool</span>
+                </button>
+                <button 
+                  onClick={closeToolModal} 
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             <div className="p-6 space-y-5 max-h-[82vh] overflow-y-auto">
@@ -490,16 +572,169 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
                   <span className="text-slate-500 font-medium">Processing Engine:</span>
                   <span className="font-semibold text-emerald-600 flex items-center">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-                    Local Browser Session
+                    Local Browser Session (100% Private)
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium">Selected Inputs:</span>
                   <span className="font-mono text-slate-900 font-bold bg-white px-2.5 py-0.5 rounded border border-slate-200">
-                    {selectedFiles.length > 0 ? `${selectedFiles.length} file(s)` : (textInput ? 'Raw text input' : 'Default dataset')}
+                    {selectedFiles.length > 0 ? `${selectedFiles.length} file(s)` : (textInput ? `${textInput.length} chars text` : 'Default dataset')}
                   </span>
                 </div>
               </div>
+
+              {/* CONTEXTUAL IN-MODAL INPUT SECTION */}
+              {(() => {
+                const isFileTool = activeTool.inputFormats.some(fmt => 
+                  ['PDF', 'PNG', 'JPG', 'WEBP', 'ZIP', 'DOCX', 'HEIC', 'HEIF', 'SVG', 'ICO', 'IMAGE', 'FILES'].includes(fmt.toUpperCase())
+                ) || activeTool.id.startsWith('pdf-') || activeTool.id.startsWith('img-') || activeTool.id.startsWith('zip-') || activeTool.id.startsWith('docx-') || activeTool.id === 'qr-decoder';
+
+                const acceptsText = !isFileTool || ['pdf-form-filler', 'hash-calculator', 'checksum-calc', 'base64', 'qr-decoder', 'img-to-pdf'].includes(activeTool.id);
+                const sampleData = getSampleDataForTool(activeTool.id);
+
+                return (
+                  <div className="space-y-4">
+                    {/* IN-MODAL FILE DROPZONE */}
+                    {isFileTool && (
+                      <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50/50 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-extrabold text-slate-900 flex items-center space-x-1.5">
+                            <FileUp className="w-4 h-4 text-[#4F46E5]" />
+                            <span>Select File(s) for {activeTool.name}:</span>
+                          </label>
+                          {selectedFiles.length > 0 && (
+                            <button 
+                              type="button" 
+                              onClick={clearFiles} 
+                              className="text-[11px] font-bold text-slate-500 hover:text-rose-600 transition-colors flex items-center space-x-1"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              <span>Clear ({selectedFiles.length})</span>
+                            </button>
+                          )}
+                        </div>
+
+                        <div 
+                          onDragOver={(e) => { e.preventDefault(); setModalDragActive(true); }}
+                          onDragLeave={() => setModalDragActive(false)}
+                          onDrop={handleModalDrop}
+                          className={`border-2 border-dashed rounded-xl p-5 text-center transition-all cursor-pointer relative ${
+                            modalDragActive 
+                              ? 'border-[#4F46E5] bg-[#EEF2FF]/60 ring-4 ring-[#4F46E5]/10' 
+                              : 'border-slate-300 bg-white hover:border-[#4F46E5] hover:bg-slate-50/50'
+                          }`}
+                        >
+                          <input 
+                            type="file" 
+                            multiple 
+                            onChange={handleModalFileChange}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            title="Click or drag files here"
+                          />
+                          {selectedFiles.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center space-y-1.5 py-2">
+                              <div className="w-9 h-9 rounded-xl bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center border border-indigo-100 shadow-2xs">
+                                <FileUp className="w-4 h-4" />
+                              </div>
+                              <p className="text-xs font-extrabold text-slate-900">
+                                Drag & drop files here, or <span className="text-[#4F46E5] underline">browse</span>
+                              </p>
+                              <p className="text-[11px] text-slate-400 font-medium">
+                                Accepted formats: {activeTool.inputFormats.join(', ')} • 100% processed locally in browser
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="space-y-1.5 text-left relative z-20">
+                              <div className="text-[11px] font-bold text-slate-700 mb-1">
+                                Ready to process ({selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''}):
+                              </div>
+                              <div className="max-h-32 overflow-y-auto space-y-1 pr-1">
+                                {selectedFiles.map((file, idx) => (
+                                  <div key={idx} className="flex items-center justify-between bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg text-xs">
+                                    <div className="flex items-center space-x-2 truncate mr-2">
+                                      <FileIcon className="w-3.5 h-3.5 text-[#4F46E5] shrink-0" />
+                                      <span className="font-bold text-slate-900 truncate max-w-xs">{file.name}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 shrink-0">
+                                      <span className="font-mono text-slate-500 text-[10px]">{formatBytes(file.size)}</span>
+                                      <button 
+                                        type="button" 
+                                        onClick={(e) => { e.stopPropagation(); removeFileAtIndex(idx); }}
+                                        className="text-slate-400 hover:text-rose-600 p-0.5"
+                                        title="Remove file"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              <p className="text-center text-[11px] font-bold text-[#4F46E5] pt-1 hover:underline">
+                                + Add more files
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* IN-MODAL TEXT / CODE / DATA INPUT */}
+                    {acceptsText && (
+                      <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50/50 space-y-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <label className="text-xs font-extrabold text-slate-900 flex items-center space-x-1.5">
+                            <Code className="w-4 h-4 text-[#4F46E5]" />
+                            <span>Input Payload / Source Code:</span>
+                            {textInput && (
+                              <span className="text-[10px] font-mono text-slate-500 font-semibold ml-1">
+                                ({textInput.split('\n').length} lines • {textInput.length} chars)
+                              </span>
+                            )}
+                          </label>
+                          <div className="flex items-center space-x-1.5">
+                            {sampleData && (
+                              <button
+                                type="button"
+                                onClick={loadSampleData}
+                                className="px-2.5 py-1 rounded-lg bg-[#EEF2FF] hover:bg-indigo-100 text-[#4F46E5] border border-indigo-200 text-[11px] font-extrabold transition-all flex items-center space-x-1 shadow-2xs hover:scale-[1.02]"
+                                title={sampleData.description}
+                              >
+                                <Sparkles className="w-3 h-3 text-[#4F46E5]" />
+                                <span>✨ Load Sample Data</span>
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={pasteFromClipboard}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-bold transition-all flex items-center space-x-1 shadow-2xs"
+                            >
+                              <Clipboard className="w-3 h-3 text-slate-500" />
+                              <span>Paste</span>
+                            </button>
+                            {textInput && (
+                              <button
+                                type="button"
+                                onClick={() => setTextInput('')}
+                                className="px-2 py-1 rounded-lg bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 text-[11px] font-bold transition-all flex items-center space-x-1 shadow-2xs"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Clear</span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <textarea
+                          value={textInput}
+                          onChange={(e) => setTextInput(e.target.value)}
+                          placeholder={sampleData ? `Type input here, paste from clipboard, or click '✨ Load Sample Data' (${sampleData.description})...` : "Paste or type payload here..."}
+                          className="w-full h-32 p-3 rounded-xl border border-slate-300 bg-white text-xs font-mono text-slate-900 focus:outline-none focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/15 resize-y placeholder:text-slate-400 leading-relaxed"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* DYNAMIC USER PARAMETER CONTROLS */}
               <div className="p-4 rounded-2xl bg-[#EEF2FF]/40 border border-indigo-100 space-y-3">
@@ -1078,6 +1313,35 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
                   </div>
                 );
               })()}
+
+              {/* BRANDEX DIGITAL AGENCY LEAD-GEN BANNER */}
+              <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-4 text-white flex flex-col sm:flex-row items-center justify-between gap-4 border border-indigo-900/60 shadow-md">
+                <div className="flex items-center space-x-3.5 text-left">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                    <Sparkles className="w-5 h-5 text-indigo-300" />
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-extrabold text-white">Need Custom Software or Automated Workflows?</span>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
+                        BrandEX Agency
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed font-medium">
+                      We architect bespoke web applications, high-volume automation, and custom internal software tools.
+                    </p>
+                  </div>
+                </div>
+                <a
+                  href="https://brandex.co.in"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-4 py-2 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-extrabold shrink-0 transition-all flex items-center space-x-1.5 shadow-md hover:scale-[1.03] active:scale-[0.97]"
+                >
+                  <span>Visit brandex.co.in</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
 
             {/* MODAL FOOTER */}

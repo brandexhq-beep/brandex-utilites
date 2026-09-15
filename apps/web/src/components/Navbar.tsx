@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from './Link';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, ExternalLink } from 'lucide-react';
 import BrandexLogo from './BrandexLogo';
 
 interface NavbarProps {
@@ -30,10 +30,16 @@ export default function Navbar({ onOpenSearch, currentPath }: NavbarProps) {
     <header className="sticky top-0 z-50 w-full h-16 min-h-16 max-h-16 bg-white border-b border-slate-200 shadow-xs shrink-0 flex items-center box-border">
       <div className="w-full h-full px-6 sm:px-10 flex items-center justify-between box-border">
         
-        {/* LOGO */}
-        <Link href="/" className="flex items-center shrink-0 group">
-          <BrandexLogo size="md" />
-        </Link>
+        {/* LOGO & AGENCY TRUST BADGE */}
+        <div className="flex items-center space-x-3 shrink-0">
+          <Link href="/" className="flex items-center group">
+            <BrandexLogo size="md" />
+          </Link>
+          <span className="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+            100% Free & Private
+          </span>
+        </div>
 
         {/* NAVIGATION LINKS WITH BOTTOM BORDER INDICATOR */}
         <nav className="hidden xl:flex items-center space-x-6 text-xs font-semibold text-slate-600 h-full shrink">
@@ -68,6 +74,18 @@ export default function Navbar({ onOpenSearch, currentPath }: NavbarProps) {
               ⌘K
             </kbd>
           </button>
+
+          {/* AGENCY EXTERNAL LINK */}
+          <a
+            href="https://brandex.co.in"
+            target="_blank"
+            rel="noreferrer"
+            className="hidden lg:inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-full border border-slate-200 hover:border-[#4F46E5] text-slate-700 hover:text-[#4F46E5] text-xs font-bold transition-all shadow-2xs hover:scale-[1.02]"
+            title="BrandEX Digital Agency — Websites & Custom Software"
+          >
+            <span>Agency</span>
+            <ExternalLink className="w-3 h-3 text-slate-400" />
+          </a>
 
           {/* PURPLE PILL BUTTON MATCHING SCREENSHOT */}
           <Link

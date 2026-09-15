@@ -10,7 +10,9 @@ import { formatBytes } from '@/lib/file';
 import { 
   Search, 
   File as FileIcon, 
-  ArrowRight
+  ArrowRight,
+  Sparkles,
+  ExternalLink
 } from 'lucide-react';
 import { inspectFileDeterministically, FileIntelligenceReport } from '@/lib/engine';
 import TypewriterText from '@/components/TypewriterText';
@@ -305,26 +307,74 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* OPEN SOURCE CTA */}
-        <div className="w-full max-w-4xl bg-[#0f172a] rounded-2xl p-10 lg:p-12 text-center text-white mb-12 shadow-2xl border border-slate-800 relative overflow-hidden">
-           <h2 className="text-3xl font-extrabold text-white mb-3 tracking-tight uppercase">BUILT IN THE OPEN</h2>
-           <p className="text-slate-300 text-sm mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
-             BrandEX Utilities is designed as a clean open-source toolkit for everyday digital work.
-           </p>
-           <div className="flex flex-wrap justify-center gap-6 mb-8 text-xs font-semibold text-indigo-300">
-             <span>✓ Open Source</span>
-             <span>✓ Self-hostable</span>
-             <span>✓ Community driven</span>
-             <span>✓ Transparent</span>
-           </div>
-           <a 
-             href="https://github.com/brandex" 
-             target="_blank" 
-             rel="noreferrer" 
-             className="inline-flex items-center px-7 py-3.5 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-extrabold text-xs rounded-full transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]"
-           >
-             View on GitHub <ArrowRight className="w-4 h-4 ml-2" />
-           </a>
+        {/* BRANDEX DIGITAL AGENCY SHOWCASE & COMMUNITY BANNER */}
+        <div className="w-full max-w-5xl mb-20 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 rounded-3xl p-8 sm:p-12 text-white border border-slate-800 shadow-2xl relative overflow-hidden">
+          {/* Subtle decorative background glow */}
+          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 space-y-4 text-left">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-extrabold uppercase tracking-wide">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
+                <span>Crafted by BrandEX Digital Agency</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                Empowering Modern Businesses With Tailored Software & Web Platforms
+              </h2>
+
+              <p className="text-slate-300 text-sm leading-relaxed font-medium">
+                BrandEX Utilities was engineered to give creators, developers, and businesses a completely private, 100% in-browser digital toolkit with zero server file uploads. Beyond community tools, BrandEX partners with modern brands to build custom web applications, internal systems, and automated operations.
+              </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-300">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></div>
+                  <span>Custom SaaS & Apps</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-300">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></div>
+                  <span>High-Converting Sites</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-300">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></div>
+                  <span>Workflow Automation</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-2">
+                <span className="text-[10px] font-extrabold uppercase text-indigo-300 tracking-wider">Enterprise & Bespoke Software</span>
+                <h3 className="text-lg font-bold text-white">Have a Project or Workflow in Mind?</h3>
+                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                  Whether you need custom company tools, high-volume automated data pipelines, or a modern digital flagship for your brand, our senior engineering team is ready.
+                </p>
+              </div>
+
+              <div className="space-y-2.5 pt-2">
+                <a
+                  href="https://brandex.co.in"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full py-3 px-5 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-extrabold transition-all flex items-center justify-center space-x-2 shadow-lg shadow-indigo-500/25 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span>Partner with BrandEX Agency</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href="https://github.com/brandex"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full py-2.5 px-5 rounded-full bg-white/10 hover:bg-white/15 text-slate-200 text-xs font-bold transition-all flex items-center justify-center space-x-2 border border-white/10"
+                >
+                  <span>View Community Tools on GitHub</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
       </main>
