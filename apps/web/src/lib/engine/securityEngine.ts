@@ -5,15 +5,14 @@ import { ProcessingResult } from './imageEngine';
  */
 export async function computeHash(input: File | string, algorithm: 'SHA-256' | 'SHA-512' | 'SHA-1' = 'SHA-256'): Promise<ProcessingResult> {
   try {
-    let buffer: ArrayBuffer;
+    let dataBuffer: BufferSource;
     if (typeof input === 'string') {
-      const encoder = new TextEncoder();
-      buffer = encoder.encode(input).buffer;
+      dataBuffer = new TextEncoder().encode(input);
     } else {
-      buffer = await input.arrayBuffer();
+      dataBuffer = await input.arrayBuffer();
     }
 
-    const hashBuffer = await crypto.subtle.digest(algorithm, buffer);
+    const hashBuffer = await crypto.subtle.digest(algorithm, dataBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
@@ -92,12 +91,22 @@ export async function generateRSAKeyPair(): Promise<ProcessingResult> {
       ['encrypt', 'decrypt']
     );
 
+    const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const chunkSize = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunkSize)));
+      }
+      return btoa(binary);
+    };
+
     const exportedPublic = await crypto.subtle.exportKey('spki', keyPair.publicKey);
-    const b64Public = btoa(String.fromCharCode(...new Uint8Array(exportedPublic)));
+    const b64Public = arrayBufferToBase64(exportedPublic);
     const pemPublic = `-----BEGIN PUBLIC KEY-----\n${b64Public.match(/.{1,64}/g)?.join('\n')}\n-----END PUBLIC KEY-----`;
 
     const exportedPrivate = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
-    const b64Private = btoa(String.fromCharCode(...new Uint8Array(exportedPrivate)));
+    const b64Private = arrayBufferToBase64(exportedPrivate);
     const pemPrivate = `-----BEGIN PRIVATE KEY-----\n${b64Private.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----`;
 
     const fullResult = `${pemPublic}\n\n${pemPrivate}`;

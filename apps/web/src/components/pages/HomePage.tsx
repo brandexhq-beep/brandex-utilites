@@ -208,12 +208,12 @@ export default function HomePage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                  {(fileReport?.suggestedActions || [
-                   { name: 'Compress File', categorySlug: 'pdf', description: 'Run local file optimization' },
-                   { name: 'Compute Hash', categorySlug: 'security', description: 'Compute cryptographic SHA-256 checksum' }
+                   { name: 'Compress File', categorySlug: 'pdf', toolId: 'pdf-compress', description: 'Run local file optimization' },
+                   { name: 'Compute Hash', categorySlug: 'security', toolId: 'hash-calculator', description: 'Compute cryptographic SHA-256 checksum' }
                  ]).map(action => (
                    <Link 
                      key={action.name} 
-                     href={`/categories/${action.categorySlug}`} 
+                     href={action.toolId ? `/categories/${action.categorySlug}?tool=${action.toolId}` : `/categories/${action.categorySlug}`} 
                      className="p-4 bg-white border border-slate-200 rounded-2xl text-xs font-extrabold text-slate-900 hover:border-[#4F46E5] hover:shadow-lg hover:shadow-[#4F46E5]/10 hover:-translate-y-0.5 transition-all text-left group flex flex-col justify-between"
                    >
                      <div className="flex justify-between items-center mb-1">
@@ -235,18 +235,18 @@ export default function HomePage() {
           </h2>
           <div className="flex flex-wrap justify-center gap-3 max-w-4xl">
             {[
-              { name: 'Compress PDF', slug: 'pdf' },
-              { name: 'Convert Image', slug: 'images' },
-              { name: 'JSON Formatter', slug: 'dev' },
-              { name: 'SHA256 Checksum', slug: 'security' },
-              { name: 'JSON to CSV', slug: 'data' },
-              { name: 'ZIP Extractor', slug: 'archives' },
-              { name: 'QR Code Generator', slug: 'web' },
-              { name: 'UUID Token Generator', slug: 'generators' }
+              { name: 'Compress PDF', slug: 'pdf', toolId: 'pdf-compress' },
+              { name: 'Convert Image', slug: 'images', toolId: 'img-convert' },
+              { name: 'JSON Formatter', slug: 'dev', toolId: 'json-formatter' },
+              { name: 'SHA256 Checksum', slug: 'security', toolId: 'hash-calculator' },
+              { name: 'JSON to CSV', slug: 'data', toolId: 'json-to-csv' },
+              { name: 'ZIP Extractor', slug: 'archives', toolId: 'zip-extract' },
+              { name: 'QR Code Generator', slug: 'web', toolId: 'qr-generator' },
+              { name: 'UUID Token Generator', slug: 'generators', toolId: 'uuid-generator' }
             ].map(task => (
               <Link 
                 key={task.name} 
-                href={`/categories/${task.slug}`}
+                href={`/categories/${task.slug}?tool=${task.toolId}`}
                 className="px-4 py-2 bg-white border border-slate-200 rounded-full text-xs font-extrabold text-slate-700 hover:border-[#4F46E5] hover:text-[#4F46E5] hover:bg-[#EEF2FF]/50 hover:scale-[1.03] transition-all shadow-xs"
               >
                 {task.name}

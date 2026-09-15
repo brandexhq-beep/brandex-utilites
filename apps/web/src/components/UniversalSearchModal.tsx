@@ -66,13 +66,17 @@ export default function UniversalSearchModal({ isOpen, onClose }: UniversalSearc
         {/* RESULTS LIST WITH HOVER ANIMATIONS */}
         <div className="p-4 max-h-[420px] overflow-y-auto space-y-2">
           {filteredTools.length > 0 ? (
-            filteredTools.map(tool => (
-              <Link
-                key={tool.id}
-                href={`/categories/${tool.categorySlug}`}
-                onClick={onClose}
-                className="p-3.5 rounded-xl border border-slate-100 hover:border-[#4F46E5]/30 hover:bg-[#EEF2FF]/40 transition-all flex items-center justify-between group"
-              >
+            filteredTools.map(tool => {
+              const toolHref = tool.id.startsWith('qr-') 
+                ? '/tools/qr-studio' 
+                : `/categories/${tool.categorySlug}?tool=${tool.id}`;
+              return (
+                <Link
+                  key={tool.id}
+                  href={toolHref}
+                  onClick={onClose}
+                  className="p-3.5 rounded-xl border border-slate-100 hover:border-[#4F46E5]/30 hover:bg-[#EEF2FF]/40 transition-all flex items-center justify-between group"
+                >
                 <div>
                   <div className="flex items-center space-x-2.5">
                     <span className="font-extrabold text-slate-900 text-sm group-hover:text-[#4F46E5] transition-colors">
@@ -88,7 +92,8 @@ export default function UniversalSearchModal({ isOpen, onClose }: UniversalSearc
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#4F46E5] group-hover:translate-x-1 transition-all" />
               </Link>
-            ))
+            );
+          })
           ) : (
             <div className="p-8 text-center text-slate-500 text-xs">
               No utilities found matching &quot;{query}&quot;. Try searching for PDF, Image, JSON, or Hash.

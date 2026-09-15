@@ -7,7 +7,23 @@ export const connection: ConnectionOptions = {
   port: parseInt(process.env.REDIS_PORT || '6379', 10),
 };
 
-export const redis = new IORedis(connection);
+let redisInstance: IORedis | null = null;
+
+export function getRedisClient(): IORedis {
+  if (!redisInstance) {
+    redisInstance = new IORedis(connection);
+  }
+  return redisInstance;
+}
+
+// Lazy proxy for backward compatibility
+export const redis = new Proxy({} as IORedis, {
+  get(_target, prop) {
+    const client = getRedisClient();
+    const value = (client as any)[prop];
+    return typeof value === 'function' ? value.bind(client) : value;
+  }
+});
 
 export const QUEUE_NAMES = {
   PDF: 'pdf-queue',

@@ -42,22 +42,83 @@ export function jsonToCSV(jsonInput: string): ProcessingResult {
 }
 
 /**
+ * RFC 4180 Compliant CSV Parser
+ * Correctly parses commas inside quotes, escaped quotes (""), and multiline fields.
+ */
+export function parseCSV(text: string): string[][] {
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentCell = '';
+  let insideQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+
+    if (char === '"') {
+      if (insideQuotes && nextChar === '"') {
+        currentCell += '"';
+        i++;
+      } else {
+        insideQuotes = !insideQuotes;
+      }
+    } else if (char === ',' && !insideQuotes) {
+      currentRow.push(currentCell.trim());
+      currentCell = '';
+    } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++;
+      }
+      currentRow.push(currentCell.trim());
+      if (currentRow.some(c => c.length > 0)) {
+        rows.push(currentRow);
+      }
+      currentRow = [];
+      currentCell = '';
+    } else {
+      currentCell += char;
+    }
+  }
+
+  if (currentCell.length > 0 || currentRow.length > 0) {
+    currentRow.push(currentCell.trim());
+    if (currentRow.some(c => c.length > 0)) {
+      rows.push(currentRow);
+    }
+  }
+
+  return rows;
+}
+
+export function serializeCSV(rows: string[][]): string {
+  return rows.map(row => 
+    row.map(cell => {
+      const val = cell ?? '';
+      if (val.includes(',') || val.includes('"') || val.includes('\n') || val.includes('\r')) {
+        return `"${val.replace(/"/g, '""')}"`;
+      }
+      return val;
+    }).join(',')
+  ).join('\n');
+}
+
+/**
  * Real Local CSV to JSON Converter
  */
 export function csvToJSON(csvInput: string): ProcessingResult {
   try {
-    const lines = csvInput.trim().split('\n');
-    if (lines.length < 2) throw new Error('CSV must contain at least a header row and one data row.');
+    const rows = parseCSV(csvInput.trim());
+    if (rows.length < 2) throw new Error('CSV must contain at least a header row and one data row.');
 
-    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    const headers = rows[0];
     const result = [];
 
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      const currentline = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (row.length === 0 || (row.length === 1 && !row[0])) continue;
       const obj: Record<string, string> = {};
       headers.forEach((header, index) => {
-        obj[header] = currentline[index] || '';
+        obj[header] = row[index] || '';
       });
       result.push(obj);
     }
@@ -87,22 +148,8 @@ export function csvToJSON(csvInput: string): ProcessingResult {
  */
 export function fixCSVQuotes(csvInput: string): ProcessingResult {
   try {
-    const lines = csvInput.split('\n');
-    const fixedLines = lines.map(line => {
-      const parts = line.split(',');
-      const fixedParts = parts.map(part => {
-        const trimmed = part.trim();
-        // If contains commas, double quotes, or newlines, quote properly
-        if (trimmed.includes('"') || trimmed.includes(',')) {
-          const innerEscaped = trimmed.replace(/^"|"$/g, '').replace(/"/g, '""');
-          return `"${innerEscaped}"`;
-        }
-        return trimmed;
-      });
-      return fixedParts.join(',');
-    });
-
-    const fixed = fixedLines.join('\n');
+    const rows = parseCSV(csvInput);
+    const fixed = serializeCSV(rows);
     const blob = new Blob([fixed], { type: 'text/csv' });
 
     return {
@@ -124,11 +171,11 @@ export function fixCSVQuotes(csvInput: string): ProcessingResult {
  */
 export function normalizeCSVHeaders(csvInput: string, style: 'snake' | 'camel' | 'lower' = 'snake'): ProcessingResult {
   try {
-    const lines = csvInput.trim().split('\n');
-    if (lines.length === 0) throw new Error('CSV input is empty.');
+    const rows = parseCSV(csvInput.trim());
+    if (rows.length === 0) throw new Error('CSV input is empty.');
 
-    const headers = lines[0].split(',').map(h => {
-      const clean = h.trim().replace(/^"|"$/g, '');
+    rows[0] = rows[0].map(h => {
+      const clean = h.trim();
       if (style === 'snake') {
         return clean.toLowerCase().replace(/[\s\W-]+/g, '_');
       } else if (style === 'camel') {
@@ -138,8 +185,7 @@ export function normalizeCSVHeaders(csvInput: string, style: 'snake' | 'camel' |
       }
     });
 
-    lines[0] = headers.join(',');
-    const normalized = lines.join('\n');
+    const normalized = serializeCSV(rows);
     const blob = new Blob([normalized], { type: 'text/csv' });
 
     return {
@@ -161,21 +207,18 @@ export function normalizeCSVHeaders(csvInput: string, style: 'snake' | 'camel' |
  */
 export function removeEmptyCSVColumns(csvInput: string): ProcessingResult {
   try {
-    const lines = csvInput.trim().split('\n').filter(Boolean);
-    if (lines.length === 0) throw new Error('CSV input is empty.');
+    const rows = parseCSV(csvInput.trim());
+    if (rows.length === 0) throw new Error('CSV input is empty.');
 
-    const rows = lines.map(l => l.split(',').map(c => c.trim().replace(/^"|"$/g, '')));
     const colCount = rows[0].length;
-
-    // Detect which columns are non-empty in at least one data row
     const keepColIndices: number[] = [];
     for (let c = 0; c < colCount; c++) {
       const hasValue = rows.slice(1).some(row => row[c] && row[c].length > 0);
       if (hasValue) keepColIndices.push(c);
     }
 
-    const prunedRows = rows.map(row => keepColIndices.map(c => `"${row[c] || ''}"`).join(','));
-    const prunedContent = prunedRows.join('\n');
+    const prunedRows = rows.map(row => keepColIndices.map(c => row[c] || ''));
+    const prunedContent = serializeCSV(prunedRows);
     const removedCount = colCount - keepColIndices.length;
 
     const blob = new Blob([prunedContent], { type: 'text/csv' });

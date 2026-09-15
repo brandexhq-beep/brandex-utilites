@@ -81,6 +81,19 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeTool, setActiveTool] = useState<UtilityItem | null>(null);
+
+  useEffect(() => {
+    if (category && typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const toolId = urlParams.get('tool');
+      if (toolId) {
+        const found = category.featuredTools.find(t => t.id === toolId);
+        if (found) {
+          setActiveTool(found);
+        }
+      }
+    }
+  }, [category]);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [textInput, setTextInput] = useState('');
@@ -150,6 +163,22 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
     setActiveTool(tool);
     setResult(null);
     setCopied(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tool', tool.id);
+      window.history.replaceState(null, '', url.toString());
+    }
+  };
+
+  const closeToolModal = () => {
+    setActiveTool(null);
+    setResult(null);
+    setCopied(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('tool');
+      window.history.replaceState(null, '', url.toString());
+    }
   };
 
   const runExecution = async () => {
@@ -445,7 +474,7 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
                 <h3 className="text-xl font-extrabold text-slate-900">{activeTool.name}</h3>
               </div>
               <button 
-                onClick={() => setActiveTool(null)} 
+                onClick={closeToolModal} 
                 className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -1054,7 +1083,7 @@ export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPag
             {/* MODAL FOOTER */}
             <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end space-x-3">
               <button 
-                onClick={() => setActiveTool(null)} 
+                onClick={closeToolModal} 
                 className="px-5 py-2.5 rounded-full text-xs font-bold text-slate-600 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
                 Close

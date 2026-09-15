@@ -51,7 +51,8 @@ import {
   stripTrackingParams
 } from './securityEngine';
 import { extractZip, createZip } from './archiveEngine';
-import { generateQRCode } from './qrEngine';
+import { generateQRCode, decodeQRPayload } from './qrEngine';
+import { decodeQRCodeFromImage } from './qrStudioEngine';
 import {
   processUrlEncoding,
   generateMetaTags,
@@ -413,13 +414,43 @@ export async function executeLocalUtility(payload: ToolExecutionPayload): Promis
       return extractHtmlLinks(await resolveText('<a href="https://brandex.co.in">BrandEX</a><img src="/logo.png"/><script src="/bundle.js"></script>'));
 
     // 8. QR & CODES STUDIO
+    case 'qr-decoder': {
+      if (mainFile) {
+        try {
+          const decoded = await decodeQRCodeFromImage(mainFile);
+          const decodedJson = JSON.stringify(decoded, null, 2);
+          const blob = new Blob([decodedJson], { type: 'application/json' });
+          return {
+            success: true,
+            outputBlob: blob,
+            outputUrl: URL.createObjectURL(blob),
+            outputFileName: 'qr_decoded.json',
+            data: decodedJson,
+            outputSize: blob.size
+          };
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Failed to decode QR image';
+          return { success: false, error: msg };
+        }
+      }
+      if (textInput && textInput.trim()) {
+        const decoded = decodeQRPayload(textInput.trim());
+        const decodedJson = JSON.stringify(decoded, null, 2);
+        return {
+          success: true,
+          data: decodedJson,
+          outputFileName: 'qr_payload_decoded.json'
+        };
+      }
+      return { success: false, error: 'Please upload an image containing a QR code to decode.' };
+    }
+
     case 'qr-generator':
     case 'qr-url':
     case 'qr-vcard':
     case 'qr-wifi':
     case 'qr-upi':
     case 'qr-upi-validator':
-    case 'qr-decoder':
     case 'qr-canvas-editor':
     case 'qr-logo-editor':
     case 'qr-export-print':
@@ -623,6 +654,27 @@ ${issues.length > 0 ? issues.map(i => `⚠️ ${i}`).join('\n') : '✅ All check
         result.originalUrl = URL.createObjectURL(mainFile);
       } catch {
         // Continue if ObjectURL fails
+      }
+    }
+
+    // Universal Auto-Synthesis: If result succeeded with data but no outputUrl/outputBlob, synthesize them so download is enabled
+    if (!result.outputUrl && result.data) {
+      try {
+        const textData = typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2);
+        let mime = 'text/plain';
+        if (result.outputFileName?.endsWith('.json')) mime = 'application/json';
+        else if (result.outputFileName?.endsWith('.html')) mime = 'text/html';
+        else if (result.outputFileName?.endsWith('.css')) mime = 'text/css';
+        else if (result.outputFileName?.endsWith('.csv')) mime = 'text/csv';
+        else if (result.outputFileName?.endsWith('.svg')) mime = 'image/svg+xml';
+        else if (result.outputFileName?.endsWith('.js')) mime = 'text/javascript';
+
+        const blob = new Blob([textData], { type: mime });
+        result.outputBlob = blob;
+        result.outputUrl = URL.createObjectURL(blob);
+        result.outputSize = blob.size;
+      } catch {
+        // Continue if blob creation fails
       }
     }
   }

@@ -16,9 +16,11 @@ export function getFileExtension(filename: string): string {
 }
 
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (!Number.isFinite(bytes) || bytes === 0) return '0 Bytes';
+  const sign = bytes < 0 ? '-' : '';
+  const absBytes = Math.abs(bytes);
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  const i = Math.min(Math.floor(Math.log(absBytes) / Math.log(k)), sizes.length - 1);
+  return `${sign}${parseFloat((absBytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 }

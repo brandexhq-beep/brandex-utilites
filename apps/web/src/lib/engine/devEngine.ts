@@ -67,8 +67,13 @@ export function decodeJWT(jwtToken: string): ProcessingResult {
       throw new Error('Invalid JWT format. A valid token consists of 3 dot-separated parts.');
     }
     const b64Decode = (str: string) => {
-      const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(decodeURIComponent(escape(atob(base64))));
+      let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+      while (base64.length % 4 !== 0) {
+        base64 += '=';
+      }
+      const binaryString = atob(base64);
+      const bytes = Uint8Array.from(binaryString, c => c.charCodeAt(0));
+      return JSON.parse(new TextDecoder().decode(bytes));
     };
 
     const header = b64Decode(parts[0]);
@@ -153,7 +158,7 @@ export function convertCurl(curlCommand: string): ProcessingResult {
   try {
     if (!curlCommand || !curlCommand.trim()) throw new Error('cURL command cannot be empty.');
 
-    const urlMatch = curlCommand.match(/curl\s+(?:-[A-Za-z]+\s+)*['"]?([^'"]+)['"]?/i);
+    const urlMatch = curlCommand.match(/curl\s+(?:-[A-Za-z0-9-]+\s+)*['"]?([^'"]+)['"]?/i);
     const methodMatch = curlCommand.match(/-X\s+([A-Z]+)/i);
     const method = methodMatch ? methodMatch[1].toUpperCase() : 'GET';
     const url = urlMatch ? urlMatch[1] : 'https://api.brandex.co.in/v1/resource';
@@ -168,13 +173,23 @@ export function convertCurl(curlCommand: string): ProcessingResult {
     }
 
     const dataMatch = curlCommand.match(/(?:-d|--data|--data-raw)\s+['"]([^'"]+)['"]/i);
-    const bodyData = dataMatch ? dataMatch[1] : null;
+    const rawBody = dataMatch ? dataMatch[1] : null;
+
+    let bodyExpression = '// No request body';
+    if (rawBody) {
+      try {
+        const parsed = JSON.parse(rawBody);
+        bodyExpression = `body: JSON.stringify(${JSON.stringify(parsed, null, 2)})`;
+      } catch {
+        bodyExpression = `body: ${JSON.stringify(rawBody)}`;
+      }
+    }
 
     const jsFetchCode = `// Generated JavaScript Fetch Code by BrandEX
 fetch('${url}', {
   method: '${method}',
   headers: ${JSON.stringify(headers, null, 4)},
-  ${bodyData ? `body: JSON.stringify(${bodyData})` : '// No request body'}
+  ${bodyExpression}
 })
   .then(res => res.json())
   .then(data => console.log('Response:', data))
@@ -208,12 +223,25 @@ export function evaluateRegex(pattern: string, text: string): ProcessingResult {
     const regex = new RegExp(pattern, 'g');
     const matches = [];
     let match;
+    let iterations = 0;
+    const maxIterations = 5000;
+
     while ((match = regex.exec(text)) !== null) {
+      iterations++;
       matches.push({
         index: match.index,
         match: match[0],
         groups: match.slice(1)
       });
+
+      // Prevent infinite loop on empty matches (e.g. .*, ^, \b, ())
+      if (match[0].length === 0) {
+        regex.lastIndex++;
+      }
+
+      if (iterations >= maxIterations) {
+        break;
+      }
     }
 
     const output = JSON.stringify({ pattern, totalMatches: matches.length, matches }, null, 2);
