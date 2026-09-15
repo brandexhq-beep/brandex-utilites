@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import UniversalSearchModal from '@/components/UniversalSearchModal';
@@ -63,7 +61,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-bg-secondary text-text-primary font-sans flex flex-col transition-colors">
-      <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+      <Navbar onOpenSearch={() => setIsSearchOpen(true)} currentPath="/categories" />
       <UniversalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       <main className="flex-1 w-full mx-auto px-6 sm:px-10 py-6">

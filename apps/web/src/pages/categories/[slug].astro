@@ -1,0 +1,21 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import CategoryDetailPage from '@/components/pages/CategoryDetailPage';
+import { CATEGORIES } from '@/lib/categories';
+
+export function getStaticPaths() {
+  return CATEGORIES.map((category) => ({
+    params: { slug: category.slug },
+    props: { category }
+  }));
+}
+
+const { slug } = Astro.params;
+const { category } = Astro.props;
+const pageTitle = category ? `${category.name} Utilities - BrandEX` : 'Utilities Toolkit - BrandEX';
+const pageDesc = category?.description || 'Browser-local utilities with zero server file uploads.';
+---
+
+<Layout title={pageTitle} description={pageDesc}>
+  <CategoryDetailPage client:load slug={slug} />
+</Layout>

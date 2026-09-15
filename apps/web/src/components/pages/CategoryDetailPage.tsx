@@ -1,8 +1,5 @@
-"use client";
-
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import Link from '@/components/Link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import UniversalSearchModal from '@/components/UniversalSearchModal';
@@ -67,9 +64,19 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   CheckSquare: <CheckSquare className="w-8 h-8 text-[#4F46E5]" />
 };
 
-export default function CategoryDetailPage() {
-  const params = useParams();
-  const slug = (params?.slug as string) || '';
+interface CategoryDetailPageProps {
+  slug?: string;
+}
+
+export default function CategoryDetailPage({ slug: propSlug }: CategoryDetailPageProps) {
+  const [slug, setSlug] = useState(propSlug || '');
+  useEffect(() => {
+    if (!slug && typeof window !== 'undefined') {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      const last = parts[parts.length - 1];
+      if (last && last !== 'categories') setSlug(last);
+    }
+  }, [slug]);
   const category = getCategoryBySlug(slug);
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -196,7 +203,7 @@ export default function CategoryDetailPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col transition-colors selection:bg-[#EEF2FF] selection:text-[#4F46E5]">
-      <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+      <Navbar onOpenSearch={() => setIsSearchOpen(true)} currentPath={`/categories/${slug}`} />
       <UniversalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       {/* FLOATING PROCESSING TOAST NOTIFICATION */}

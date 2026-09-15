@@ -1,37 +1,21 @@
-"use client";
-
 import React, { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import UniversalSearchModal from '@/components/UniversalSearchModal';
 import MarqueeBanner from '@/components/MarqueeBanner';
 import Toast from '@/components/Toast';
 import { CATEGORIES } from '@/lib/categories';
-import { calculateSHA256, formatBytes } from '@/lib/file';
+import { formatBytes } from '@/lib/file';
 import { 
   Search, 
   File as FileIcon, 
-  FileText, 
-  Image as ImageIcon, 
-  Code, 
-  Database, 
-  Lock, 
-  Archive, 
-  Globe, 
-  Wand2, 
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  CheckCircle2,
-  Cpu,
-  Layers,
+  ArrowRight
 } from 'lucide-react';
-import { executeLocalUtility, inspectFileDeterministically, FileIntelligenceReport } from '@/lib/engine';
-
+import { inspectFileDeterministically, FileIntelligenceReport } from '@/lib/engine';
 import TypewriterText from '@/components/TypewriterText';
 
-export default function Home() {
+export default function HomePage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [inspectedFile, setInspectedFile] = useState<{
@@ -81,7 +65,7 @@ export default function Home() {
     <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col transition-colors selection:bg-[#EEF2FF] selection:text-[#4F46E5]">
       
       {/* NAVBAR */}
-      <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+      <Navbar onOpenSearch={() => setIsSearchOpen(true)} currentPath="/" />
       
       {/* UNIVERSAL SEARCH MODAL */}
       <UniversalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

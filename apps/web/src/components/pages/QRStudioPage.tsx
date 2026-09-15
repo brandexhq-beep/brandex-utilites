@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import UniversalSearchModal from '@/components/UniversalSearchModal';
@@ -286,7 +284,7 @@ export default function QRStudioPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col selection:bg-[#EEF2FF] selection:text-[#4F46E5]">
-      <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+      <Navbar onOpenSearch={() => setIsSearchOpen(true)} currentPath="/tools/qr-studio" />
       <UniversalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <Toast message={toastMessage} isVisible={showToast} onClose={() => setShowToast(false)} />
 
