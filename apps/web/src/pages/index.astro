@@ -1,8 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import HomePage from '@/components/pages/HomePage';
+
+const pageTitle = "BrandEX Utilities — 214+ Free Online Tools for PDF, Images, Code & Data";
+const pageDesc = "Free, 100% private in-browser utilities for developers, designers, students, and businesses. Convert, compress, format, encrypt, and generate with zero server uploads.";
 ---
 
-<Layout title="BrandEX Utilities - 100% Client-Side Free Developer & File Tools">
+<Layout title={pageTitle} description={pageDesc}>
   <HomePage client:load />
 </Layout>

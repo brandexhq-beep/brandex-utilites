@@ -23,17 +23,17 @@ export default function GuidelinesPage() {
         </div>
 
         {/* HERO BANNER */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] rounded-3xl p-8 lg:p-12 mb-10 text-white shadow-xl relative overflow-hidden">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#4F46E5]/20 border border-[#4F46E5]/40 text-indigo-300 text-xs font-extrabold tracking-wide uppercase mb-4">
-            <BookOpen className="w-4 h-4 mr-1 text-indigo-400" />
-            <span>PLATFORM GUIDELINES & BEST PRACTICES</span>
+        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 mb-10 text-white shadow-xl relative overflow-hidden">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#4F46E5]/20 border border-[#4F46E5]/40 text-indigo-300 text-[11px] sm:text-xs font-extrabold tracking-wide uppercase mb-4 max-w-full">
+            <BookOpen className="w-4 h-4 mr-1 text-indigo-400 shrink-0" />
+            <span className="truncate">PLATFORM GUIDELINES & BEST PRACTICES</span>
           </div>
 
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight break-words">
             Platform Guidelines & Performance Tips
           </h1>
 
-          <p className="text-slate-300 text-base lg:text-lg max-w-3xl leading-relaxed font-medium">
+          <p className="text-slate-300 text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-medium">
             Learn how to get maximum performance out of BrandEX local software utilities using your device memory.
           </p>
         </div>

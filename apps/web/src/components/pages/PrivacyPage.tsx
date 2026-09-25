@@ -23,17 +23,17 @@ export default function PrivacyPolicyPage() {
         </div>
 
         {/* HERO BANNER */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] rounded-3xl p-8 lg:p-12 mb-10 text-white shadow-xl relative overflow-hidden">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold tracking-wide uppercase mb-4">
-            <ShieldCheck className="w-4 h-4 mr-1 text-emerald-400" />
-            <span>100% LOCAL-FIRST GUARANTEE</span>
+        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 mb-10 text-white shadow-xl relative overflow-hidden">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] sm:text-xs font-extrabold tracking-wide uppercase mb-4 max-w-full">
+            <ShieldCheck className="w-4 h-4 mr-1 text-emerald-400 shrink-0" />
+            <span className="truncate">100% LOCAL-FIRST GUARANTEE</span>
           </div>
 
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight break-words">
             Privacy Policy & Zero-Knowledge Architecture
           </h1>
 
-          <p className="text-slate-300 text-base lg:text-lg max-w-3xl leading-relaxed font-medium">
+          <p className="text-slate-300 text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-medium">
             At BrandEX Utilities, privacy is not a setting—it is the foundation of our local-first software architecture. Your files, documents, images, and text payloads never touch BrandEX servers.
           </p>
         </div>

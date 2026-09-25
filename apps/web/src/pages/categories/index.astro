@@ -1,8 +1,62 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import CategoriesPage from '@/components/pages/CategoriesPage';
+import { CATEGORIES } from '@/lib/categories';
+
+const siteUrl = (Astro.site ? Astro.site.toString() : 'https://brandex-utilities.vercel.app').replace(/\/$/, '');
+const categoriesUrl = `${siteUrl}/categories`;
+
+const pageTitle = "Browse All Utility Categories — 214+ Free Online Tools | BrandEX";
+const pageDesc = "Explore 18 specialized utility categories including PDF, Images, Developer, Security, Audio, Video, CSV/Data, and Design tools. Free, private, and client-side.";
+
+const breadcrumbsSchema = {
+  "@type": "BreadcrumbList",
+  "@id": `${categoriesUrl}/#breadcrumbs`,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Categories",
+      "item": categoriesUrl
+    }
+  ]
+};
+
+const collectionSchema = {
+  "@type": "CollectionPage",
+  "@id": `${categoriesUrl}/#collection`,
+  "name": "BrandEX Utilities Categories",
+  "url": categoriesUrl,
+  "description": pageDesc,
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Utility Categories",
+    "numberOfItems": CATEGORIES.length,
+    "itemListElement": CATEGORIES.map((cat, idx) => ({
+      "@type": "ListItem",
+      "position": idx + 1,
+      "name": cat.name,
+      "url": `${siteUrl}/categories/${cat.slug}`
+    }))
+  }
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    breadcrumbsSchema,
+    collectionSchema
+  ]
+};
 ---
 
-<Layout title="All Utility Categories - BrandEX Utilities">
+<Layout title={pageTitle} description={pageDesc}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
   <CategoriesPage client:load />
 </Layout>

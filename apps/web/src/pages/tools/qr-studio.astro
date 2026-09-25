@@ -1,8 +1,63 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import QRStudioPage from '@/components/pages/QRStudioPage';
+
+const siteUrl = (Astro.site ? Astro.site.toString() : 'https://brandex-utilities.vercel.app').replace(/\/$/, '');
+const toolUrl = `${siteUrl}/tools/qr-studio`;
+
+const pageTitle = "QR Studio — Free High-Resolution QR Generator & Scanner | BrandEX";
+const pageDesc = "Design customizable, high-resolution QR codes and scan QR codes in real-time. 100% private, client-side generation with zero server uploads.";
+
+const webAppSchema = {
+  "@type": "WebApplication",
+  "@id": `${toolUrl}/#app`,
+  "name": "QR Studio",
+  "url": toolUrl,
+  "description": "High-resolution custom QR code generator and real-time scanner directly in your browser.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "@id": "https://brandex.co.in/#organization",
+    "name": "BrandEX",
+    "url": "https://brandex.co.in"
+  }
+};
+
+const breadcrumbsSchema = {
+  "@type": "BreadcrumbList",
+  "@id": `${toolUrl}/#breadcrumbs`,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "QR Studio",
+      "item": toolUrl
+    }
+  ]
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    webAppSchema,
+    breadcrumbsSchema
+  ]
+};
 ---
 
-<Layout title="QR Studio - High-Resolution Local QR Code Generator & Scanner | BrandEX">
+<Layout title={pageTitle} description={pageDesc}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
   <QRStudioPage client:load />
 </Layout>

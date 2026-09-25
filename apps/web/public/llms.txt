@@ -1,0 +1,32 @@
+# BrandEX Utilities
+
+> BrandEX Utilities is a suite of 214+ free, privacy-first, client-side web tools for developers, designers, students, and businesses. Built by BrandEX Digital Agency (https://brandex.co.in).
+
+## Core Principles & Architecture
+- **100% Client-Side Processing**: All file conversions, formatting, hashing, encryption, and generations run entirely inside the user's browser using WebAssembly, HTML5 APIs, and Web Workers.
+- **Zero Server Uploads**: No user files, documents, or data ever leave the client device or get transmitted to remote servers.
+- **Always Free**: No registration, no subscription paywalls, and no rate limits.
+
+## Main Sections
+- [Homepage](https://brandex-utilities.vercel.app/): Quick access to the most popular utilities and category directories.
+- [All Categories](https://brandex-utilities.vercel.app/categories): Complete directory of 18 utility categories.
+- [QR Studio](https://brandex-utilities.vercel.app/tools/qr-studio): Custom high-resolution QR code generator and scanner.
+- [Privacy Policy](https://brandex-utilities.vercel.app/privacy): Detailed information on local computation and zero data retention.
+- [Terms of Service](https://brandex-utilities.vercel.app/terms): Standard usage terms.
+
+## Tool Categories
+- [PDF Tools](https://brandex-utilities.vercel.app/categories/pdf): Merge, split, compress, protect, unlock, rotate, watermark, page reorder, and convert PDF documents.
+- [Image Tools](https://brandex-utilities.vercel.app/categories/image): Convert, resize, crop, compress, blur, invert, and inspect image formats (PNG, JPG, WebP, SVG).
+- [Developer Tools](https://brandex-utilities.vercel.app/categories/developer): JSON formatter, YAML converter, regex tester, UUID generator, base64 encoder, and code minifiers.
+- [Text & Content Tools](https://brandex-utilities.vercel.app/categories/text): Word counter, text diff, case converter, slugify, markdown previewer, and lore generator.
+- [Security & Cryptography](https://brandex-utilities.vercel.app/categories/security): MD5, SHA-256, SHA-512, bcrypt generator, HMAC calculator, password generator, and symmetric encryption.
+- [Data & CSV Tools](https://brandex-utilities.vercel.app/categories/csv): CSV to JSON, Excel converters, SQL schema generators, and column extractors.
+- [Audio & Media Tools](https://brandex-utilities.vercel.app/categories/audio): Tone generator, audio trimmer, BPM counter, and decibel converter.
+- [Video & Animation Tools](https://brandex-utilities.vercel.app/categories/video): Frame extractor, video metadata inspector, GIF maker, and aspect ratio calculator.
+- [CSS & Design Tools](https://brandex-utilities.vercel.app/categories/css): CSS gradient generator, box-shadow maker, color palette generator, and px-to-rem calculator.
+- [Math & Unit Converters](https://brandex-utilities.vercel.app/categories/math): Unit converter, percentage calculator, base converter, and timestamp parser.
+
+## Organization
+BrandEX is a digital agency based in Bangalore, India, offering custom software development, digital marketing, business automation, and white-label technology platforms.
+- Website: https://brandex.co.in
+- Utilities Subdomain: https://brandex-utilities.vercel.app

@@ -18,11 +18,27 @@ export default function BrandexLogo({
     lg: 'h-11'
   };
 
+  const widthMap = {
+    sm: 95,
+    md: 127,
+    lg: 175
+  };
+
+  const pixelHeight = {
+    sm: 24,
+    md: 32,
+    lg: 44
+  };
+
   return (
     <div className={`flex items-center space-x-2 select-none ${className}`}>
       <img 
         src="/brandex-logo.png" 
-        alt="Brandex Logo" 
+        alt="Brandex" 
+        width={widthMap[size]}
+        height={pixelHeight[size]}
+        decoding="async"
+        loading="eager"
         className={`${heightMap[size]} w-auto object-contain shrink-0 ${
           variant === 'dark' ? 'brightness-0 invert' : ''
         }`}

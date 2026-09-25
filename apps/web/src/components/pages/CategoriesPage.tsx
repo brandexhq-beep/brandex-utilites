@@ -74,18 +74,18 @@ export default function CategoriesPage() {
         </div>
 
         {/* HERO BANNER SECTION */}
-        <div className="bg-gradient-to-br from-white via-[#FAFAFF] to-[#EEF2FF]/70 border border-slate-200/90 rounded-3xl p-8 lg:p-12 mb-12 shadow-xl shadow-indigo-500/5 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-white via-[#FAFAFF] to-[#EEF2FF]/70 border border-slate-200/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 mb-12 shadow-xl shadow-indigo-500/5 relative overflow-hidden">
           <div className="max-w-3xl relative z-10">
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF2FF] border border-indigo-100 text-[#4F46E5] text-xs font-extrabold tracking-wide uppercase mb-4 shadow-xs">
-              <span>UNIVERSAL TOOL REGISTRY</span>
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#EEF2FF] border border-indigo-100 text-[#4F46E5] text-xs font-extrabold tracking-wide uppercase mb-4 shadow-xs">
+              <span>100% Free & Private</span>
             </div>
             
-            <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-tight">
-              Explore All <span className="bg-gradient-to-r from-[#4F46E5] via-[#6366F1] to-[#7C3AED] bg-clip-text text-transparent">Utility Categories</span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-[1.2] sm:leading-tight break-words">
+              Explore All <span className="bg-gradient-to-r from-[#4F46E5] via-[#6366F1] to-[#7C3AED] bg-clip-text text-transparent inline-block pt-0.5 pb-1.5">Tool Categories</span>
             </h1>
             
-            <p className="text-base lg:text-lg text-slate-600 font-medium mb-8 leading-relaxed">
-              Explore 15+ specialized local software toolkits for document management, media conversion, security, data parsing, and web development. All processing is 100% local and browser-native.
+            <p className="text-sm sm:text-base lg:text-lg text-slate-600 font-medium mb-8 leading-relaxed">
+              Explore specialized toolkits for document management, image conversion, security, data formatting, and developer workflows. Everything runs directly on your device.
             </p>
 
             {/* INTERACTIVE SEARCH BAR WITH FOCUS GLOW */}
@@ -173,7 +173,7 @@ export default function CategoriesPage() {
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-[#4F46E5] group-hover:translate-x-0.5 transition-transform">
-                <span>Explore Toolkit</span>
+                <span>Browse Tools</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </Link>
@@ -185,11 +185,11 @@ export default function CategoriesPage() {
           <div className="space-y-2 text-center md:text-left">
             <div className="inline-flex items-center space-x-2 text-indigo-300 text-xs font-bold uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Local Execution Architecture</span>
+              <span>100% Private & Secure</span>
             </div>
             <h3 className="text-2xl font-bold text-white">Files Never Leave Your Device</h3>
             <p className="text-indigo-200 text-sm max-w-xl">
-              BrandEX Utilities processes document conversions, encryption, formatting, and file extractions directly inside your browser memory using WebAssembly.
+              BrandEX Utilities processes conversions, encryption, formatting, and file extractions directly inside your browser — zero files are ever sent to servers.
             </p>
           </div>
           <Link 

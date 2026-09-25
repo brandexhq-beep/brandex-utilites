@@ -24,33 +24,31 @@ export default function Toast({ message, isVisible, onClose, actionUrl, actionFi
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-[92px] left-1/2 -translate-x-1/2 z-[100] w-full max-w-md px-4 animate-in slide-in-from-top-6 fade-in duration-300">
-      <div className="bg-white border-2 border-emerald-500 rounded-2xl shadow-2xl p-4 flex items-center space-x-3.5 text-slate-900 ring-4 ring-emerald-500/10">
-        <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 shadow-xs">
-          <CheckCircle2 className="w-5 h-5" />
+    <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom,1rem))] left-3 right-3 sm:left-auto sm:right-6 z-[100] sm:max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto">
+      <div className="bg-slate-900 text-white rounded-2xl shadow-2xl p-3.5 sm:p-4 flex items-start space-x-3 border border-slate-800">
+        <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+          <CheckCircle2 className="w-4 h-4" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2">
-            <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Processing Complete</h4>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          </div>
-          <p className="text-xs text-slate-600 mt-0.5 leading-snug truncate">{message}</p>
+          <p className="text-xs font-semibold text-slate-200 leading-snug">{message}</p>
 
           {actionUrl && (
-            <div className="mt-2">
+            <div className="mt-2.5">
               <a
                 href={actionUrl}
                 download={actionFileName || 'result'}
-                className="inline-flex items-center px-4 py-1.5 rounded-lg bg-emerald-600 text-white font-extrabold text-xs hover:bg-emerald-700 transition-all shadow-sm hover:scale-[1.02]"
+                className="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-[#4F46E5] text-white font-bold text-xs hover:bg-[#4338CA] transition-all shadow-sm"
               >
-                Download Result File
+                Download File
               </a>
             </div>
           )}
         </div>
         <button
           onClick={onClose}
-          className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
+          className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0 min-h-[32px] min-w-[32px] flex items-center justify-center"
+          title="Dismiss notification"
+          aria-label="Dismiss notification"
         >
           <X className="w-4 h-4" />
         </button>

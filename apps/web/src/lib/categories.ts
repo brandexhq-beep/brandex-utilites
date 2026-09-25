@@ -541,3 +541,19 @@ export const CATEGORIES: CategoryData[] = [
 export function getCategoryBySlug(slug: string): CategoryData | undefined {
   return CATEGORIES.find(c => c.slug.toLowerCase() === slug.toLowerCase());
 }
+
+export function getAllTools(): Array<{ tool: UtilityItem; category: CategoryData }> {
+  return CATEGORIES.flatMap(category => 
+    category.featuredTools.map(tool => ({ tool, category }))
+  );
+}
+
+export function getToolById(toolId: string): { tool: UtilityItem; category: CategoryData } | undefined {
+  for (const category of CATEGORIES) {
+    const tool = category.featuredTools.find(t => t.id.toLowerCase() === toolId.toLowerCase());
+    if (tool) {
+      return { tool, category };
+    }
+  }
+  return undefined;
+}

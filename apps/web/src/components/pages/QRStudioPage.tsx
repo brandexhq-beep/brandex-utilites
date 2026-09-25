@@ -300,26 +300,26 @@ export default function QRStudioPage() {
         </div>
 
         {/* HEADER HERO */}
-        <div className="bg-gradient-to-br from-white via-[#FAFAFF] to-[#EEF2FF]/70 border border-slate-200 rounded-3xl p-8 mb-8 shadow-sm">
+        <div className="bg-gradient-to-br from-white via-[#FAFAFF] to-[#EEF2FF]/70 border border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-8 mb-8 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#EEF2FF] border border-indigo-100 text-[#4F46E5] text-xs font-extrabold tracking-wide uppercase mb-3">
-                <QrCode className="w-3.5 h-3.5 mr-1" />
-                <span>CLIENT-SIDE QR WORKSPACE</span>
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#EEF2FF] border border-indigo-100 text-[#4F46E5] text-[11px] sm:text-xs font-extrabold tracking-wide uppercase mb-3 max-w-full">
+                <QrCode className="w-3.5 h-3.5 mr-1 shrink-0" />
+                <span className="truncate">CLIENT-SIDE QR WORKSPACE</span>
               </div>
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight mb-2 break-words">
                 BrandEX QR Studio
               </h1>
-              <p className="text-slate-600 text-sm max-w-2xl font-medium">
+              <p className="text-slate-600 text-xs sm:text-sm max-w-2xl font-medium leading-relaxed">
                 Create, decode, customize, validate, test, and export high-resolution QR codes entirely inside your browser session. Zero cloud file uploads.
               </p>
             </div>
 
             {/* TAB SELECTOR */}
-            <div className="flex items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shrink-0">
+            <div className="flex items-center bg-slate-100 p-1 rounded-xl sm:rounded-2xl border border-slate-200 w-full sm:w-auto shrink-0">
               <button
                 onClick={() => setActiveTab('create')}
-                className={`px-5 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-5 py-2 rounded-lg sm:rounded-xl text-xs font-extrabold transition-all text-center ${
                   activeTab === 'create'
                     ? 'bg-white text-[#4F46E5] shadow-sm border border-slate-200/80'
                     : 'text-slate-600 hover:text-slate-900'
@@ -329,7 +329,7 @@ export default function QRStudioPage() {
               </button>
               <button
                 onClick={() => setActiveTab('decode')}
-                className={`px-5 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-5 py-2 rounded-lg sm:rounded-xl text-xs font-extrabold transition-all text-center ${
                   activeTab === 'decode'
                     ? 'bg-white text-[#4F46E5] shadow-sm border border-slate-200/80'
                     : 'text-slate-600 hover:text-slate-900'
@@ -339,7 +339,7 @@ export default function QRStudioPage() {
               </button>
               <button
                 onClick={() => setActiveTab('batch')}
-                className={`px-5 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-5 py-2 rounded-lg sm:rounded-xl text-xs font-extrabold transition-all text-center ${
                   activeTab === 'batch'
                     ? 'bg-white text-[#4F46E5] shadow-sm border border-slate-200/80'
                     : 'text-slate-600 hover:text-slate-900'

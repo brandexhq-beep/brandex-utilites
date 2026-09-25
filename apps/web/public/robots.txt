@@ -1,0 +1,34 @@
+# BrandEX Utilities - Search Engine & AI Crawler Directives
+# https://brandex-utilities.vercel.app
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# AI Search Engines & Conversational Answer Engines
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# XML Sitemap Index
+Sitemap: https://brandex-utilities.vercel.app/sitemap-index.xml

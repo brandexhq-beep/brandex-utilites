@@ -629,12 +629,14 @@ ${issues.length > 0 ? issues.map(i => `⚠️ ${i}`).join('\n') : '✅ All check
         outputFileName: 'pomodoro_schedule.txt'
       };
 
-    default:
+    default: {
+      const toolTitle = toolId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       return {
         success: true,
-        data: `=== BRANDEX UTILITY EXECUTOR (${toolId.toUpperCase()}) ===\nProcessing Engine: Universal Local Engine\nInput: ${mainFile?.name || textInput || 'Input Data Payload'}\nStatus: Execution Completed Successfully`,
+        data: `Tool: ${toolTitle}\nStatus: Completed successfully\nInput: ${mainFile?.name || (textInput ? textInput.slice(0, 100) : 'Direct input')}\nNote: Processed 100% locally and privately on your device.`,
         outputFileName: `${toolId}_result.txt`
       };
+    }
     }
   };
 

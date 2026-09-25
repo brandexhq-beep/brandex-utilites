@@ -23,17 +23,17 @@ export default function TermsPage() {
         </div>
 
         {/* HERO BANNER */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] rounded-3xl p-8 lg:p-12 mb-10 text-white shadow-xl relative overflow-hidden">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-extrabold tracking-wide uppercase mb-4">
-            <Scale className="w-4 h-4 mr-1 text-indigo-400" />
-            <span>PLATFORM TERMS & USAGE AGREEMENT</span>
+        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 mb-10 text-white shadow-xl relative overflow-hidden">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[11px] sm:text-xs font-extrabold tracking-wide uppercase mb-4 max-w-full">
+            <Scale className="w-4 h-4 mr-1 text-indigo-400 shrink-0" />
+            <span className="truncate">PLATFORM TERMS & USAGE AGREEMENT</span>
           </div>
 
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight break-words">
             Terms of Service & Usage Guidelines
           </h1>
 
-          <p className="text-slate-300 text-base lg:text-lg max-w-3xl leading-relaxed font-medium">
+          <p className="text-slate-300 text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-medium">
             BrandEX Utilities provides high-performance, browser-native tools with zero subscription fees, zero usage limits, and zero mandatory cloud accounts.
           </p>
         </div>

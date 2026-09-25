@@ -1,0 +1,93 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import BrandexLogo from '@/components/BrandexLogo';
+import { Home, Layers } from 'lucide-react';
+
+const popularCategories = [
+  { name: 'PDF Utilities', slug: 'pdf', icon: 'FileText' },
+  { name: 'Image Processing', slug: 'image', icon: 'Image' },
+  { name: 'Developer & Code', slug: 'developer', icon: 'Code2' },
+  { name: 'Security & Hashing', slug: 'security', icon: 'Lock' },
+  { name: 'Text & Formats', slug: 'text', icon: 'Type' },
+];
+---
+
+<Layout 
+  title="Page Not Found (404) — BrandEX Utilities" 
+  description="The utility page or resource you requested could not be found. Browse our 214+ free online tools or return to the homepage."
+>
+  <div class="min-h-screen bg-slate-50 flex flex-col justify-between">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-4 px-6">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="/" class="flex items-center space-x-2">
+          <BrandexLogo size="md" />
+        </a>
+        <a 
+          href="/categories" 
+          class="text-xs font-bold text-slate-700 hover:text-[#4F46E5] flex items-center space-x-1.5 transition-colors"
+        >
+          <Layers className="w-4 h-4" />
+          <span>Browse All 214+ Tools</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Error Content -->
+    <main class="flex-1 flex items-center justify-center p-6">
+      <div class="max-w-xl w-full text-center space-y-8 py-12">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-indigo-50 border border-indigo-100 text-[#4F46E5] text-3xl font-black shadow-sm">
+          404
+        </div>
+
+        <div class="space-y-3">
+          <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+            Utility Not Found
+          </h1>
+          <p class="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+            The page or utility you requested might have been renamed, moved, or is temporarily unavailable. All our 214+ tools remain online and accessible below.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="/"
+            class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#4F46E5] text-white font-bold text-xs hover:bg-[#4338CA] transition-colors shadow-sm"
+          >
+            <Home className="w-4 h-4" />
+            <span>Return to Homepage</span>
+          </a>
+          <a
+            href="/categories"
+            class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors shadow-sm"
+          >
+            <Layers className="w-4 h-4" />
+            <span>Explore Categories</span>
+          </a>
+        </div>
+
+        <!-- Popular Category Shortcuts -->
+        <div class="pt-8 border-t border-slate-200/80">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
+            Popular Utility Categories
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            {popularCategories.map((cat) => (
+              <a
+                href={`/categories/${cat.slug}`}
+                class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:border-[#4F46E5] hover:text-[#4F46E5] transition-colors shadow-2xs"
+              >
+                {cat.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+      <p>© {new Date().getFullYear()} BrandEX Utilities. Built with 100% client-side privacy by <a href="https://brandex.co.in" class="text-[#4F46E5] font-semibold hover:underline">BrandEX</a>.</p>
+    </footer>
+  </div>
+</Layout>
